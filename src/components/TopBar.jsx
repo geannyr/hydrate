@@ -2,6 +2,7 @@ import { FiSettings } from 'react-icons/fi';
 import { useI18n } from '../i18n';
 import LangSwitcher from './LangSwitcher';
 import ThemeToggle from './ThemeToggle';
+import InstallButton from './InstallButton';
 
 export default function TopBar({ onOpenSettings }) {
   const { t } = useI18n();
@@ -20,6 +21,7 @@ export default function TopBar({ onOpenSettings }) {
       </a>
 
       <div className="flex items-center gap-2">
+        <InstallButton />
         <ThemeToggle />
         <button
           type="button"

@@ -90,6 +90,9 @@ const translations = {
       L: 'L',
     },
     portfolio: 'Portfolio',
+    install: { cta: 'Install app' },
+    returnReminder: 'Welcome back! Time for a glass of water?',
+    celebrate: '🎉 Daily goal reached!',
     footer: { madeBy: 'Made by' },
     a11y: {
       toggleTheme: 'Toggle theme',
@@ -189,6 +192,9 @@ const translations = {
       L: 'L',
     },
     portfolio: 'Portfólio',
+    install: { cta: 'Instalar app' },
+    returnReminder: 'Voltou! Que tal um copo de água?',
+    celebrate: '🎉 Meta diária atingida!',
     footer: { madeBy: 'Feito por' },
     a11y: {
       toggleTheme: 'Alternar tema',
@@ -288,6 +294,9 @@ const translations = {
       L: 'L',
     },
     portfolio: 'Portafolio',
+    install: { cta: 'Instalar app' },
+    returnReminder: '¡Volviste! ¿Qué tal un vaso de agua?',
+    celebrate: '🎉 ¡Meta diaria alcanzada!',
     footer: { madeBy: 'Hecho por' },
     a11y: {
       toggleTheme: 'Cambiar tema',

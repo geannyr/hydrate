@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from './i18n';
 import {
   loadHistory,
@@ -9,6 +9,7 @@ import {
   saveUser,
 } from './storage.js';
 import { calcGoal, todayKey } from './utils.js';
+import { useReturnReminder, useToday } from './hooks';
 
 import TopBar from './components/TopBar';
 import WaterHero from './components/WaterHero';
@@ -16,6 +17,8 @@ import QuickAdd from './components/QuickAdd';
 import HistoryWeek from './components/HistoryWeek';
 import OnboardingDialog from './components/OnboardingDialog';
 import SettingsDialog from './components/SettingsDialog';
+import BackgroundBubbles from './components/BackgroundBubbles';
+import Toast from './components/Toast';
 
 const REMINDER_LAST_KEY = 'hydrate.reminderLast';
 
@@ -31,20 +34,50 @@ export default function App() {
   const [history, setHistory] = useState(loadHistory);
   const [onboarded, setOnboarded] = useState(loadOnboarded);
   const [showSettings, setShowSettings] = useState(false);
-  const [lastEntry, setLastEntry] = useState(null); // {amount} for undo
+  const [lastEntry, setLastEntry] = useState(null);
   const [notifPermission, setNotifPermission] = useState(getNotifPermission);
+  const [celebrating, setCelebrating] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [lastSipAt, setLastSipAt] = useState(null);
 
+  const todayK = useToday();
   const goal = useMemo(() => calcGoal(user), [user]);
-  const todayK = todayKey();
   const current = history[todayK] || 0;
 
   useEffect(() => { saveUser(user); }, [user]);
   useEffect(() => { saveHistory(history); }, [history]);
   useEffect(() => { saveOnboarded(onboarded); }, [onboarded]);
 
+  // Detect goal-cross to trigger celebration once
+  const wasReachedRef = useRef(current >= goal && goal > 0);
+  useEffect(() => {
+    const reached = current >= goal && goal > 0;
+    if (reached && !wasReachedRef.current) {
+      setCelebrating(true);
+      setToast({ message: t('celebrate'), duration: 5000 });
+      const id = setTimeout(() => setCelebrating(false), 4000);
+      return () => clearTimeout(id);
+    }
+    wasReachedRef.current = reached;
+  }, [current, goal, t]);
+
+  // Contextual return reminder
+  const goalReached = current >= goal && goal > 0;
+  const handleReturn = useCallback(() => {
+    setToast({ message: t('returnReminder'), duration: 8000 });
+  }, [t]);
+
+  useReturnReminder({
+    lastSipAt,
+    goalReached,
+    awayThresholdMs: 60 * 60 * 1000, // 1h away
+    onTrigger: handleReturn,
+  });
+
   const handleAdd = (amount) => {
     setHistory((prev) => ({ ...prev, [todayK]: (prev[todayK] || 0) + amount }));
     setLastEntry({ amount });
+    setLastSipAt(Date.now());
   };
 
   const handleUndo = () => {
@@ -70,9 +103,7 @@ export default function App() {
     setOnboarded(true);
   };
 
-  const handleOnboardSkip = () => {
-    setOnboarded(true);
-  };
+  const handleOnboardSkip = () => setOnboarded(true);
 
   const handleSaveSettings = (newUser) => {
     setUser(newUser);
@@ -87,7 +118,7 @@ export default function App() {
     } catch (_) {}
   };
 
-  // Reminder loop — re-runs whenever user.reminders or goal changes
+  // Reminder loop
   const reminderRef = useRef(null);
   useEffect(() => {
     if (reminderRef.current) {
@@ -128,7 +159,6 @@ export default function App() {
       } catch (_) {}
     };
 
-    // Tick immediately then every minute (cheap; gated by interval check above)
     tick();
     reminderRef.current = setInterval(tick, 60 * 1000);
 
@@ -137,7 +167,7 @@ export default function App() {
     };
   }, [user.reminders, goal, t]);
 
-  // Auto-clear "lastEntry" undo after some seconds
+  // Auto-clear undo
   useEffect(() => {
     if (!lastEntry) return;
     const id = setTimeout(() => setLastEntry(null), 8000);
@@ -146,58 +176,78 @@ export default function App() {
 
   if (!onboarded) {
     return (
-      <div className="min-h-screen">
-        <main className="max-w-2xl mx-auto px-4 py-12 sm:py-16">
-          <div className="opacity-30">
-            <TopBar onOpenSettings={() => {}} />
-          </div>
-        </main>
-        <OnboardingDialog onComplete={handleOnboardComplete} onSkip={handleOnboardSkip} />
-      </div>
+      <>
+        <BackgroundBubbles />
+        <div className="min-h-screen">
+          <main className="max-w-2xl mx-auto px-4 py-12 sm:py-16">
+            <div className="opacity-30">
+              <TopBar onOpenSettings={() => {}} />
+            </div>
+          </main>
+          <OnboardingDialog onComplete={handleOnboardComplete} onSkip={handleOnboardSkip} />
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <main className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
-        <TopBar onOpenSettings={() => setShowSettings(true)} />
+    <>
+      <BackgroundBubbles />
+      <div className="min-h-screen">
+        <main className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+          <TopBar onOpenSettings={() => setShowSettings(true)} />
 
-        <WaterHero current={current} goal={goal} />
+          <div className="lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8 lg:items-start">
+            <div className="lg:sticky lg:top-8">
+              <WaterHero current={current} goal={goal} celebrating={celebrating} />
+            </div>
 
-        <QuickAdd
-          onAdd={handleAdd}
-          onUndo={handleUndo}
-          onReset={handleReset}
-          canUndo={!!lastEntry}
-          hasProgress={current > 0}
-        />
+            <div className="flex flex-col">
+              <QuickAdd
+                onAdd={handleAdd}
+                onUndo={handleUndo}
+                onReset={handleReset}
+                canUndo={!!lastEntry}
+                hasProgress={current > 0}
+              />
 
-        <HistoryWeek history={history} goal={goal} />
+              <HistoryWeek history={history} goal={goal} />
 
-        <footer className="mt-10 pt-6 border-t border-ink-border text-center text-[0.82rem] text-ink-subtle">
-          <p>
-            {t('footer.madeBy')}{' '}
-            <a
-              href="https://geannyr.github.io/curriculo2/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-ink-muted hover:text-aqua-light transition-colors"
-            >
-              Geanny Rodrigues
-            </a>
-          </p>
-        </footer>
-      </main>
+              <footer className="mt-4 pt-6 border-t border-ink-border text-center text-[0.82rem] text-ink-subtle">
+                <p>
+                  {t('footer.madeBy')}{' '}
+                  <a
+                    href="https://geannyr.github.io/curriculo2/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-ink-muted hover:text-aqua-light transition-colors"
+                  >
+                    Geanny Rodrigues
+                  </a>
+                </p>
+              </footer>
+            </div>
+          </div>
+        </main>
 
-      {showSettings && (
-        <SettingsDialog
-          user={user}
-          onSave={handleSaveSettings}
-          onClose={() => setShowSettings(false)}
-          notifPermission={notifPermission}
-          onRequestNotif={handleRequestNotif}
-        />
-      )}
-    </div>
+        {showSettings && (
+          <SettingsDialog
+            user={user}
+            onSave={handleSaveSettings}
+            onClose={() => setShowSettings(false)}
+            notifPermission={notifPermission}
+            onRequestNotif={handleRequestNotif}
+          />
+        )}
+
+        {toast && (
+          <Toast
+            message={toast.message}
+            duration={toast.duration}
+            onClose={() => setToast(null)}
+          />
+        )}
+      </div>
+    </>
   );
 }

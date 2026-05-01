@@ -1,37 +1,46 @@
 import { useI18n } from '../i18n';
 import { clamp } from '../utils.js';
+import { usePrefersReducedMotion } from '../hooks';
 
 /**
  * Water-drop hero. The drop is filled with a wave (clipped SVG) that rises
  * with the daily progress. Subtle bubbles drift upward inside the liquid.
+ * Pulses with sparkles when the daily goal is freshly reached.
  */
-export default function WaterHero({ current, goal }) {
+export default function WaterHero({ current, goal, celebrating }) {
   const { t } = useI18n();
+  const reducedMotion = usePrefersReducedMotion();
   const pct = clamp(goal > 0 ? (current / goal) * 100 : 0, 0, 100);
   const remaining = Math.max(goal - current, 0);
   const reached = current >= goal && goal > 0;
 
-  // Drop path drawn in viewBox 200×240, used both for stroke and clip.
   const DROP_PATH =
     'M100 18 C 60 70, 30 110, 30 150 a 70 70 0 0 0 140 0 c 0 -40 -30 -80 -70 -132 z';
-
-  // Water surface y (the lower the % the higher the value)
   const surfaceY = 240 - (240 * pct) / 100;
 
   return (
-    <section className="glass-strong rounded-5xl p-7 sm:p-9 mb-6 text-center animate-fade-in relative overflow-hidden">
-      {/* decorative halos */}
+    <section className="glass-strong rounded-5xl p-7 sm:p-9 mb-6 lg:mb-0 text-center animate-fade-in relative overflow-hidden">
       <div className="pointer-events-none absolute -top-24 -right-20 w-72 h-72 rounded-full bg-aqua/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-28 -left-24 w-72 h-72 rounded-full bg-aqua-deep/25 blur-3xl" />
 
       <div className="relative z-10 flex flex-col items-center">
-        <div className="relative w-[260px] h-[300px] sm:w-[280px] sm:h-[320px] mb-7">
-          {/* outer aura behind the drop */}
+        {celebrating && <Sparkles />}
+
+        <div
+          className={[
+            'relative w-[260px] h-[300px] sm:w-[280px] sm:h-[320px] mb-7',
+            celebrating ? 'motion-safe:animate-celebrate' : '',
+          ].join(' ')}
+        >
           <div
-            className="absolute inset-4 rounded-full blur-3xl opacity-60 pointer-events-none"
+            className={[
+              'absolute inset-4 rounded-full blur-3xl pointer-events-none transition-opacity duration-500',
+              celebrating ? 'opacity-100' : reached ? 'opacity-80' : 'opacity-60',
+            ].join(' ')}
             style={{
-              background:
-                'radial-gradient(circle, rgba(56,189,248,0.55) 0%, rgba(56,189,248,0) 70%)',
+              background: celebrating
+                ? 'radial-gradient(circle, rgba(255, 215, 100, 0.55) 0%, rgba(56,189,248,0.4) 40%, rgba(56,189,248,0) 75%)'
+                : 'radial-gradient(circle, rgba(56,189,248,0.55) 0%, rgba(56,189,248,0) 70%)',
             }}
           />
 
@@ -58,17 +67,9 @@ export default function WaterHero({ current, goal }) {
               </linearGradient>
             </defs>
 
-            {/* drop background */}
-            <path
-              d={DROP_PATH}
-              fill="url(#drop-bg)"
-              stroke="url(#drop-stroke)"
-              strokeWidth="1.8"
-            />
+            <path d={DROP_PATH} fill="url(#drop-bg)" stroke="url(#drop-stroke)" strokeWidth="1.8" />
 
-            {/* water + waves + bubbles, all clipped to drop shape */}
             <g clipPath="url(#drop-clip)">
-              {/* solid water fill */}
               <rect
                 x="-200"
                 y={surfaceY}
@@ -78,9 +79,8 @@ export default function WaterHero({ current, goal }) {
                 style={{ transition: 'y 0.9s cubic-bezier(0.22, 1, 0.36, 1)' }}
               />
 
-              {/* back wave (slower, more transparent) */}
               <g
-                className="animate-wave-slow"
+                className={reducedMotion ? '' : 'animate-wave-slow'}
                 style={{
                   transform: `translateY(${surfaceY - 6}px)`,
                   transition: 'transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)',
@@ -92,9 +92,8 @@ export default function WaterHero({ current, goal }) {
                 />
               </g>
 
-              {/* front wave */}
               <g
-                className="animate-wave"
+                className={reducedMotion ? '' : 'animate-wave'}
                 style={{
                   transform: `translateY(${surfaceY - 10}px)`,
                   transition: 'transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)',
@@ -107,8 +106,7 @@ export default function WaterHero({ current, goal }) {
                 />
               </g>
 
-              {/* bubbles drifting up inside the water */}
-              {pct > 8 && (
+              {pct > 8 && !reducedMotion && (
                 <g>
                   <circle cx="65" cy="200" r="3" fill="rgba(255,255,255,0.55)">
                     <animate attributeName="cy" values="210;60" dur="6.5s" repeatCount="indefinite" />
@@ -129,20 +127,10 @@ export default function WaterHero({ current, goal }) {
               )}
             </g>
 
-            {/* subtle highlight on the drop body */}
-            <ellipse
-              cx="74"
-              cy="78"
-              rx="9"
-              ry="22"
-              fill="rgba(255,255,255,0.30)"
-              transform="rotate(-22 74 78)"
-            />
-            {/* tip glint */}
+            <ellipse cx="74" cy="78" rx="9" ry="22" fill="rgba(255,255,255,0.30)" transform="rotate(-22 74 78)" />
             <circle cx="100" cy="22" r="3" fill="rgba(255,255,255,0.6)" />
           </svg>
 
-          {/* center label */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <div
               className="font-heading font-bold text-[2.9rem] sm:text-[3.1rem] leading-none tracking-tight text-white"
@@ -177,5 +165,33 @@ export default function WaterHero({ current, goal }) {
         </p>
       </div>
     </section>
+  );
+}
+
+function Sparkles() {
+  // 6 small star-shapes scattered around the drop, fade in/out with delays
+  const POSITIONS = [
+    { top: '8%', left: '18%', size: 14, delay: 0 },
+    { top: '14%', right: '14%', size: 18, delay: 0.2 },
+    { top: '40%', left: '6%', size: 12, delay: 0.5 },
+    { top: '46%', right: '8%', size: 14, delay: 0.7 },
+    { bottom: '12%', left: '14%', size: 10, delay: 0.3 },
+    { bottom: '16%', right: '20%', size: 16, delay: 0.6 },
+  ];
+  return (
+    <div className="absolute inset-0 pointer-events-none z-20">
+      {POSITIONS.map((p, i) => (
+        <span
+          key={i}
+          className="absolute text-yellow-300 motion-safe:animate-sparkle"
+          style={{ ...p, animationDelay: `${p.delay}s` }}
+          aria-hidden="true"
+        >
+          <svg width={p.size} height={p.size} viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0 L13.5 9 L22 11 L13.5 13 L12 22 L10.5 13 L2 11 L10.5 9 Z" />
+          </svg>
+        </span>
+      ))}
+    </div>
   );
 }
