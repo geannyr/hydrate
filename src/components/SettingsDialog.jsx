@@ -233,15 +233,15 @@ function Toggle({ checked, onChange }) {
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={[
-        'relative w-12 h-7 rounded-full transition-colors duration-200',
-        checked ? 'bg-aqua' : 'bg-ink-border',
+        'relative shrink-0 w-[52px] h-[30px] rounded-full transition-colors duration-300 outline-none',
+        'focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 focus-visible:ring-offset-ink-bg',
+        checked ? 'bg-aqua shadow-[0_0_16px_rgba(56,189,250,0.45)]' : 'bg-ink-border-hover',
       ].join(' ')}
     >
       <span
-        className={[
-          'absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200',
-          checked ? 'translate-x-6' : 'translate-x-1',
-        ].join(' ')}
+        aria-hidden="true"
+        className="absolute top-[3px] left-[3px] w-6 h-6 rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+        style={{ transform: checked ? 'translateX(22px)' : 'translateX(0px)' }}
       />
     </button>
   );
