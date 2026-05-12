@@ -18,56 +18,79 @@ export default function WaterHero({ current, goal, celebrating }) {
     'M100 18 C 60 70, 30 110, 30 150 a 70 70 0 0 0 140 0 c 0 -40 -30 -80 -70 -132 z';
   const surfaceY = 240 - (240 * pct) / 100;
 
+  const statusLabel = reached
+    ? t('home.goalReached')
+    : pct >= 75
+    ? t('home.almostThere')
+    : t('home.keepGoing');
+
   return (
-    <section className="glass-strong rounded-5xl p-7 sm:p-9 mb-6 lg:mb-0 text-center animate-fade-in relative overflow-hidden">
-      <div className="pointer-events-none absolute -top-24 -right-20 w-72 h-72 rounded-full bg-aqua/25 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-28 -left-24 w-72 h-72 rounded-full bg-aqua-deep/25 blur-3xl" />
+    <section className="glass-strong premium-card rounded-5xl p-6 sm:p-9 mb-6 lg:mb-0 text-center animate-fade-in relative overflow-hidden">
+      {/* Ambient color washes */}
+      <div className="pointer-events-none absolute -top-32 -right-24 w-80 h-80 rounded-full bg-aqua/30 blur-3xl motion-safe:animate-pulse-soft" />
+      <div className="pointer-events-none absolute -bottom-32 -left-28 w-80 h-80 rounded-full bg-iris/20 blur-3xl" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[60%] bg-grad-hero opacity-50 blur-2xl" aria-hidden="true" />
 
       <div className="relative z-10 flex flex-col items-center">
+        {/* Top pill: today indicator */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 bg-white/[0.04] border border-white/10 backdrop-blur-md">
+          <span className="w-1.5 h-1.5 rounded-full bg-aqua motion-safe:animate-pulse-soft" />
+          <span className="text-[0.68rem] font-semibold tracking-[0.18em] uppercase text-ink-muted">
+            {t('history.today')}
+          </span>
+        </div>
+
         {celebrating && <Sparkles />}
 
         <div
           className={[
-            'relative w-[260px] h-[300px] sm:w-[280px] sm:h-[320px] mb-7',
+            'relative w-[260px] h-[300px] sm:w-[300px] sm:h-[340px] mb-7',
             celebrating ? 'motion-safe:animate-celebrate' : '',
           ].join(' ')}
         >
+          {/* Outer glow ring */}
           <div
             className={[
-              'absolute inset-4 rounded-full blur-3xl pointer-events-none transition-opacity duration-500',
-              celebrating ? 'opacity-100' : reached ? 'opacity-80' : 'opacity-60',
+              'absolute inset-2 rounded-full blur-3xl pointer-events-none transition-opacity duration-500',
+              celebrating ? 'opacity-100' : reached ? 'opacity-90' : 'opacity-70',
             ].join(' ')}
             style={{
               background: celebrating
-                ? 'radial-gradient(circle, rgba(255, 215, 100, 0.55) 0%, rgba(56,189,248,0.4) 40%, rgba(56,189,248,0) 75%)'
-                : 'radial-gradient(circle, rgba(56,189,248,0.55) 0%, rgba(56,189,248,0) 70%)',
+                ? 'radial-gradient(circle, rgba(255, 215, 100, 0.55) 0%, rgba(56,189,248,0.4) 40%, rgba(167,139,250,0.18) 65%, transparent 80%)'
+                : 'radial-gradient(circle, rgba(56,189,248,0.55) 0%, rgba(125,211,252,0.25) 35%, rgba(167,139,250,0.15) 60%, transparent 80%)',
             }}
           />
 
-          <svg viewBox="0 0 200 240" className="relative w-full h-full" aria-hidden="true">
+          <svg viewBox="0 0 200 240" className="relative w-full h-full motion-safe:animate-float" aria-hidden="true">
             <defs>
               <clipPath id="drop-clip">
                 <path d={DROP_PATH} />
               </clipPath>
               <linearGradient id="drop-stroke" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.95" />
+                <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.9" />
+                <stop offset="60%" stopColor="#7dd3fc" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="#0369a1" stopOpacity="0.95" />
               </linearGradient>
               <linearGradient id="water-fill" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#7dd3fc" />
-                <stop offset="100%" stopColor="#0369a1" />
+                <stop offset="0%" stopColor="#bae6fd" />
+                <stop offset="55%" stopColor="#38bdf8" />
+                <stop offset="100%" stopColor="#0c4a6e" />
               </linearGradient>
               <linearGradient id="water-fill-2" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="0%" stopColor="#7dd3fc" />
                 <stop offset="100%" stopColor="#075985" />
               </linearGradient>
               <linearGradient id="drop-bg" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="rgba(125, 211, 252, 0.06)" />
-                <stop offset="100%" stopColor="rgba(56, 189, 248, 0.10)" />
+                <stop offset="0%" stopColor="rgba(125, 211, 252, 0.08)" />
+                <stop offset="100%" stopColor="rgba(56, 189, 248, 0.14)" />
               </linearGradient>
+              <radialGradient id="drop-highlight" cx="35%" cy="25%" r="40%">
+                <stop offset="0%" stopColor="rgba(255, 255, 255, 0.6)" />
+                <stop offset="100%" stopColor="rgba(255, 255, 255, 0)" />
+              </radialGradient>
             </defs>
 
-            <path d={DROP_PATH} fill="url(#drop-bg)" stroke="url(#drop-stroke)" strokeWidth="1.8" />
+            <path d={DROP_PATH} fill="url(#drop-bg)" stroke="url(#drop-stroke)" strokeWidth="2" />
 
             <g clipPath="url(#drop-clip)">
               <rect
@@ -88,7 +111,7 @@ export default function WaterHero({ current, goal, celebrating }) {
               >
                 <path
                   d="M0 12 Q 30 4, 60 12 T 120 12 T 180 12 T 240 12 T 300 12 T 360 12 T 420 12 V 30 H 0 Z"
-                  fill="rgba(186, 230, 253, 0.55)"
+                  fill="rgba(224, 242, 254, 0.65)"
                 />
               </g>
 
@@ -108,7 +131,7 @@ export default function WaterHero({ current, goal, celebrating }) {
 
               {pct > 8 && !reducedMotion && (
                 <g>
-                  <circle cx="65" cy="200" r="3" fill="rgba(255,255,255,0.55)">
+                  <circle cx="65" cy="200" r="3" fill="rgba(255,255,255,0.6)">
                     <animate attributeName="cy" values="210;60" dur="6.5s" repeatCount="indefinite" />
                     <animate attributeName="cx" values="65;72;60;68" dur="6.5s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="0;0.6;0.6;0" keyTimes="0;0.15;0.85;1" dur="6.5s" repeatCount="indefinite" />
@@ -118,58 +141,96 @@ export default function WaterHero({ current, goal, celebrating }) {
                     <animate attributeName="cx" values="125;132;120;128" dur="8s" begin="-2s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="0;0.55;0.55;0" keyTimes="0;0.15;0.85;1" dur="8s" begin="-2s" repeatCount="indefinite" />
                   </circle>
-                  <circle cx="100" cy="215" r="2.5" fill="rgba(255,255,255,0.5)">
+                  <circle cx="100" cy="215" r="2.5" fill="rgba(255,255,255,0.55)">
                     <animate attributeName="cy" values="225;65" dur="10s" begin="-4s" repeatCount="indefinite" />
                     <animate attributeName="cx" values="100;94;108;100" dur="10s" begin="-4s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="0;0.5;0.5;0" keyTimes="0;0.15;0.85;1" dur="10s" begin="-4s" repeatCount="indefinite" />
                   </circle>
+                  <circle cx="80" cy="195" r="1.5" fill="rgba(255,255,255,0.45)">
+                    <animate attributeName="cy" values="220;55" dur="7.5s" begin="-1s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0;0.5;0.5;0" keyTimes="0;0.15;0.85;1" dur="7.5s" begin="-1s" repeatCount="indefinite" />
+                  </circle>
                 </g>
               )}
+
+              <path d={DROP_PATH} fill="url(#drop-highlight)" />
             </g>
 
-            <ellipse cx="74" cy="78" rx="9" ry="22" fill="rgba(255,255,255,0.30)" transform="rotate(-22 74 78)" />
-            <circle cx="100" cy="22" r="3" fill="rgba(255,255,255,0.6)" />
+            <ellipse cx="74" cy="78" rx="9" ry="22" fill="rgba(255,255,255,0.32)" transform="rotate(-22 74 78)" />
+            <circle cx="100" cy="22" r="3" fill="rgba(255,255,255,0.7)" />
+            <ellipse cx="138" cy="180" rx="3" ry="6" fill="rgba(255,255,255,0.18)" transform="rotate(20 138 180)" />
           </svg>
 
+          {/* Center stats overlay */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <div
-              className="font-heading font-bold text-[2.9rem] sm:text-[3.1rem] leading-none tracking-tight text-white"
-              style={{ textShadow: '0 2px 16px rgba(8,38,68,0.55), 0 0 4px rgba(8,38,68,0.4)' }}
+              className="font-heading font-extrabold leading-none tracking-tight text-grad-water"
+              style={{
+                fontSize: 'clamp(2.8rem, 7vw, 3.5rem)',
+                filter: 'drop-shadow(0 4px 24px rgba(8,38,68,0.7)) drop-shadow(0 0 2px rgba(8,38,68,0.5))',
+              }}
             >
               {Math.round(pct)}%
             </div>
             <div
-              className="text-[0.84rem] text-white font-semibold tracking-wide mt-1.5 px-3 py-1 rounded-full"
+              className="text-[0.78rem] sm:text-[0.82rem] text-white font-semibold tracking-wide mt-2 px-3 py-1 rounded-full"
               style={{
-                background: 'rgba(8, 38, 68, 0.32)',
-                backdropFilter: 'blur(6px)',
-                WebkitBackdropFilter: 'blur(6px)',
+                background: 'rgba(8, 38, 68, 0.42)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
               }}
             >
-              {current.toLocaleString()} / {goal.toLocaleString()} ml
+              <span className="font-bold">{current.toLocaleString()}</span>
+              <span className="opacity-60 mx-1">/</span>
+              <span className="opacity-80">{goal.toLocaleString()} ml</span>
             </div>
           </div>
         </div>
 
-        <p className="font-heading font-semibold text-[1.18rem] text-balance">
-          {reached
-            ? t('home.goalReached')
-            : pct >= 75
-            ? t('home.almostThere')
-            : t('home.keepGoing')}
+        {/* Status text */}
+        <p className="font-heading font-semibold text-[1.22rem] sm:text-[1.3rem] text-balance leading-snug">
+          {statusLabel}
         </p>
-        <p className="text-ink-muted text-[0.94rem] mt-1.5">
+        <p className="text-ink-muted text-[0.94rem] mt-1.5 text-balance">
           {reached
             ? t('home.goalReachedShort')
             : t('home.remaining', { n: remaining.toLocaleString() })}
         </p>
+
+        {/* Linear progress track */}
+        <div className="w-full max-w-sm mt-7" aria-hidden="true">
+          <div className="relative h-2 rounded-full overflow-hidden bg-white/[0.06] border border-white/[0.08]">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-700"
+              style={{
+                width: `${pct}%`,
+                background: 'linear-gradient(90deg, #bae6fd 0%, #38bdf8 50%, #0ea5e9 100%)',
+                boxShadow: '0 0 16px rgba(56, 189, 248, 0.55)',
+              }}
+            />
+            {!reached && pct > 0 && (
+              <div
+                className="absolute inset-y-0 left-0 motion-safe:animate-shimmer rounded-full pointer-events-none"
+                style={{
+                  width: `${pct}%`,
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+                  backgroundSize: '200% 100%',
+                }}
+              />
+            )}
+          </div>
+          <div className="flex justify-between mt-2 text-[0.7rem] font-medium text-ink-subtle tabular-nums">
+            <span>0</span>
+            <span>{goal.toLocaleString()} ml</span>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
 function Sparkles() {
-  // 6 small star-shapes scattered around the drop, fade in/out with delays
   const POSITIONS = [
     { top: '8%', left: '18%', size: 14, delay: 0 },
     { top: '14%', right: '14%', size: 18, delay: 0.2 },

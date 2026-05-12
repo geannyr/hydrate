@@ -194,11 +194,11 @@ export default function App() {
     <>
       <BackgroundBubbles />
       <div className="min-h-screen">
-        <main className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 lg:py-14">
           <TopBar onOpenSettings={() => setShowSettings(true)} />
 
-          <div className="lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8 lg:items-start">
-            <div className="lg:sticky lg:top-8">
+          <div className="lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8 lg:items-start animate-slide-up">
+            <div className="lg:sticky lg:top-6">
               <WaterHero current={current} goal={goal} celebrating={celebrating} />
             </div>
 
@@ -213,7 +213,7 @@ export default function App() {
 
               <HistoryWeek history={history} goal={goal} />
 
-              <footer className="mt-4 pt-6 border-t border-ink-border text-center text-[0.82rem] text-ink-subtle">
+              <footer className="mt-2 pt-6 border-t border-ink-border text-center text-[0.82rem] text-ink-subtle">
                 <p>
                   {t('footer.madeBy')}{' '}
                   <a

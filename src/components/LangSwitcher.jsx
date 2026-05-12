@@ -14,11 +14,16 @@ export default function LangSwitcher() {
           type="button"
           onClick={() => setLang(code)}
           className={[
-            'px-3 py-1.5 rounded-full text-[0.72rem] font-bold tracking-wider uppercase transition-all duration-200',
+            'px-2.5 py-1.5 rounded-full text-[0.7rem] font-bold tracking-wider uppercase transition-all duration-200',
             code === lang
-              ? 'bg-aqua text-[#04243d] shadow-glow-soft'
+              ? 'text-[#04243d] shadow-glow-soft'
               : 'text-ink-subtle hover:text-ink-text',
           ].join(' ')}
+          style={
+            code === lang
+              ? { background: 'linear-gradient(135deg, #bae6fd 0%, #38bdf8 100%)' }
+              : undefined
+          }
         >
           {code}
         </button>
