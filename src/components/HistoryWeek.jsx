@@ -1,5 +1,5 @@
 import { useI18n } from '../i18n';
-import { lastNDaysKeys, formatDayLabel, calcStreak, todayKey } from '../utils.js';
+import { lastNDaysKeys, formatDayLabel, calcStreak, todayKey, clamp } from '../utils.js';
 
 export default function HistoryWeek({ history, goal }) {
   const { t, lang } = useI18n();
@@ -7,8 +7,6 @@ export default function HistoryWeek({ history, goal }) {
   const today = todayKey();
 
   const values = days.map((key) => history[key] || 0);
-  const max = Math.max(goal, ...values, 1);
-
   const total = values.reduce((acc, v) => acc + v, 0);
   const avg = Math.round(total / 7);
   const streak = calcStreak(history, goal);
@@ -21,187 +19,260 @@ export default function HistoryWeek({ history, goal }) {
   const streakUnit = firstSpace >= 0 ? streakStr.slice(firstSpace + 1) : '';
 
   return (
-    <section className="glass premium-card rounded-4xl p-5 sm:p-6 mb-6">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-2.5">
-          <span className="w-1 h-5 rounded-full bg-grad-iris" aria-hidden="true" />
-          <h3 className="font-heading font-semibold text-[0.78rem] tracking-[0.18em] uppercase text-ink-muted">
-            {t('history.title')}
-          </h3>
-        </div>
+    <section className="sketch-card mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-display font-bold text-[1.5rem] text-ink leading-none">
+          <span className="marker-mint">{t('history.title')}</span>
+        </h3>
       </div>
 
-      <div className="relative h-44 mb-5">
-        {/* Gridlines */}
-        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none" aria-hidden="true">
-          {[100, 75, 50, 25, 0].map((p) => (
+      {/* Bullet-journal habit tracker — 7 mini droplets in a row */}
+      <div className="grid grid-cols-7 gap-1.5 sm:gap-2.5 mb-5">
+        {days.map((key, idx) => {
+          const value = values[idx];
+          const pct = clamp(goal > 0 ? (value / goal) * 100 : 0, 0, 100);
+          const reached = value >= goal && goal > 0;
+          const isToday = key === today;
+          const label = formatDayLabel(key, lang);
+          const dayLabel =
+            label === null
+              ? t('history.today')
+              : label === 'yesterday'
+              ? t('history.yesterday')
+              : label;
+
+          return (
             <div
-              key={p}
-              className="border-t border-dashed border-white/[0.06]"
-              style={p === 0 ? { borderTopStyle: 'solid', borderTopColor: 'rgba(255,255,255,0.08)' } : undefined}
-            />
-          ))}
-        </div>
-
-        {/* Goal line */}
-        {goal > 0 && (
-          <div
-            className="absolute left-0 right-0 flex items-center pointer-events-none"
-            style={{ bottom: `${(goal / max) * 100}%` }}
-            aria-hidden="true"
-          >
-            <div className="flex-1 border-t-[1.5px] border-dashed border-aqua/40" />
-            <span className="ml-2 text-[0.6rem] font-semibold tracking-wider uppercase text-aqua-light/80 px-1.5 py-0.5 rounded-md bg-aqua/10 border border-aqua/20">
-              goal
-            </span>
-          </div>
-        )}
-
-        {/* Bars */}
-        <div className="absolute inset-0 flex items-end justify-between gap-1.5 sm:gap-2">
-          {days.map((key, idx) => {
-            const value = values[idx];
-            const heightPct = max > 0 ? (value / max) * 100 : 0;
-            const reached = value >= goal && goal > 0;
-            const isToday = key === today;
-            const label = formatDayLabel(key, lang);
-            const dayLabel =
-              label === null
-                ? t('history.today')
-                : label === 'yesterday'
-                ? t('history.yesterday')
-                : label;
-
-            const minHeight = value === 0 ? 4 : 10;
-
-            return (
-              <div key={key} className="flex-1 flex flex-col items-center gap-2 min-w-0 h-full justify-end">
-                <div className="relative w-full flex items-end justify-center flex-1">
-                  {/* Value tooltip on hover */}
-                  {value > 0 && (
-                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                      <span className="text-[0.65rem] font-bold text-ink-text bg-ink-bg/95 px-1.5 py-0.5 rounded-md border border-ink-border">
-                        {value.toLocaleString()}
-                      </span>
-                    </div>
-                  )}
-
-                  <div
-                    className={[
-                      'group w-full max-w-[36px] relative rounded-t-xl transition-all duration-500 origin-bottom',
-                      value === 0
-                        ? 'bg-white/[0.04]'
-                        : reached
-                        ? 'shadow-[0_0_18px_-2px_rgba(56,189,248,0.5)]'
-                        : '',
-                      isToday && value > 0 ? 'ring-2 ring-aqua/40 ring-offset-2 ring-offset-transparent' : '',
-                    ].join(' ')}
-                    style={{
-                      height: `${Math.max(heightPct, value === 0 ? 1 : 4)}%`,
-                      minHeight: `${minHeight}px`,
-                      background: value === 0
-                        ? undefined
-                        : reached
-                        ? 'linear-gradient(180deg, #bae6fd 0%, #38bdf8 45%, #0284c7 100%)'
-                        : 'linear-gradient(180deg, rgba(125, 211, 252, 0.85) 0%, rgba(56, 189, 248, 0.7) 50%, rgba(2, 132, 199, 0.6) 100%)',
-                      boxShadow: value > 0 && !reached
-                        ? 'inset 0 1px 0 rgba(255,255,255,0.25)'
-                        : reached
-                        ? 'inset 0 1px 0 rgba(255,255,255,0.45), 0 0 18px -2px rgba(56,189,248,0.5)'
-                        : undefined,
-                    }}
-                    title={`${value.toLocaleString()} ml`}
-                  >
-                    {/* Inner highlight */}
-                    {value > 0 && (
-                      <span
-                        className="absolute inset-x-1 top-0.5 h-3 rounded-t-xl pointer-events-none"
-                        style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.4), transparent)' }}
-                        aria-hidden="true"
-                      />
-                    )}
-                  </div>
-                </div>
-
-                <div
-                  className={[
-                    'text-[0.7rem] font-semibold truncate px-2 py-0.5 rounded-full',
-                    isToday ? 'text-aqua-light bg-aqua/10 border border-aqua/20' : 'text-ink-subtle',
-                  ].join(' ')}
-                >
-                  {dayLabel}
-                </div>
+              key={key}
+              className={[
+                'flex flex-col items-center gap-1.5',
+                idx % 2 === 0 ? 'tilt-mini' : '',
+              ].join(' ')}
+              title={`${value.toLocaleString()} ml`}
+            >
+              <HabitDroplet
+                keyId={key}
+                pct={pct}
+                reached={reached}
+                isToday={isToday}
+                value={value}
+                empty={value === 0}
+              />
+              <div
+                className={[
+                  'font-hand text-[0.78rem] sm:text-[0.88rem] text-center leading-tight max-w-full',
+                  isToday ? 'text-ink font-bold' : value === 0 ? 'text-ink-subtle' : 'text-ink-muted',
+                ].join(' ')}
+              >
+                {isToday ? (
+                  <span className="bg-butter-soft px-1.5 py-0.5 rounded-md inline-block">
+                    {dayLabel}
+                  </span>
+                ) : (
+                  dayLabel
+                )}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 pt-2">
-        <StatCard
-          icon={<AvgIcon />}
+      {/* Legend — tiny visual key */}
+      <div className="flex items-center justify-center gap-4 mb-5 font-hand text-[0.85rem] text-ink-muted">
+        <LegendDot state="empty" label={t('history.legendEmpty')} />
+        <LegendDot state="partial" label={t('history.legendPartial')} />
+        <LegendDot state="full" label={t('history.legendFull')} />
+      </div>
+
+      {/* Stats — average + streak */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <SketchStat
           label={t('history.avg')}
           value={avg.toLocaleString()}
           unit="ml"
-          tone="aqua"
+          variant="v2"
+          tone="water"
+          icon={<TrendIcon />}
         />
-        <StatCard
-          icon={<FlameIcon />}
+        <SketchStat
           label={t('history.streak')}
           value={streak}
           unit={streakUnit}
-          tone="marine"
+          variant="v3"
+          tone="mint"
+          icon={<HeartIcon />}
         />
       </div>
     </section>
   );
 }
 
-function StatCard({ icon, label, value, unit, tone = 'aqua' }) {
-  const accent =
-    tone === 'marine'
-      ? { ring: 'text-marine-light', glow: 'rgba(45, 212, 191, 0.35)' }
-      : { ring: 'text-aqua-light', glow: 'rgba(56, 189, 248, 0.35)' };
+function LegendDot({ state, label }) {
+  const fill =
+    state === 'empty' ? 'transparent'
+    : state === 'partial' ? 'var(--water-soft)'
+    : 'var(--mint-soft)';
+  const dash = state === 'empty' ? '2.5 2.5' : undefined;
+  const opacity = state === 'empty' ? 0.5 : 0.9;
+  return (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+      <svg width="14" height="16" viewBox="0 0 22 24" aria-hidden="true">
+        <path
+          d="M11 2 C 6 9, 3 14, 4 17 C 5 20, 8 22, 11 22 C 14 22, 17 20, 18 17 C 19 14, 16 9, 11 2 Z"
+          fill={fill}
+          stroke="var(--ink)"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+          strokeDasharray={dash}
+          opacity={opacity}
+          style={{ filter: 'url(#sketch-soft)' }}
+        />
+        {state === 'full' && (
+          <path d="M11 0 L 13 5 L 9 5 Z" fill="var(--blush)" stroke="var(--ink)" strokeWidth="0.9" />
+        )}
+      </svg>
+      <span>{label}</span>
+    </span>
+  );
+}
+
+/**
+ * A single day cell: small droplet that fills with baby-blue water dots
+ * based on progress. Mint when goal reached. Empty = dashed faint outline.
+ */
+function HabitDroplet({ keyId, pct, reached, isToday, value, empty }) {
+  const DROP = 'M22 3 C 14 13, 7 22, 8 28 C 9 35, 15 39, 22 39 C 29 39, 35 35, 36 28 C 37 22, 30 13, 22 3 Z';
+  const surfaceY = 40 - (40 * pct) / 100;
+  const clipId = `hclip-${keyId}`;
 
   return (
-    <div className="stat-tile flex items-center gap-3">
-      <div
-        className={`shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center ${accent.ring}`}
-        style={{
-          background: `radial-gradient(circle at 30% 30%, ${accent.glow} 0%, rgba(255,255,255,0.04) 70%)`,
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-        }}
-        aria-hidden="true"
-      >
-        {icon}
-      </div>
-      <div className="min-w-0">
-        <div className="text-[0.66rem] tracking-[0.14em] uppercase text-ink-subtle font-semibold truncate">
-          {label}
+    <div className="relative">
+      <svg viewBox="0 0 44 44" width="100%" style={{ maxWidth: 58 }} aria-label={`${value.toLocaleString()} ml`}>
+        <defs>
+          <clipPath id={clipId}>
+            <path d={DROP} />
+          </clipPath>
+        </defs>
+
+        {/* Today background ring — soft butter halo */}
+        {isToday && (
+          <circle
+            cx="22" cy="22" r="20"
+            fill="var(--butter-soft)"
+            opacity="0.55"
+          />
+        )}
+
+        {/* Empty drop background */}
+        {!empty && (
+          <path
+            d={DROP}
+            fill={reached ? 'var(--mint-soft)' : 'var(--water-soft)'}
+          />
+        )}
+
+        {/* Filled portion (water rising) */}
+        {!empty && !reached && (
+          <g clipPath={`url(#${clipId})`}>
+            <rect x="0" y={surfaceY} width="44" height="44" fill="var(--water-soft)" />
+            <g style={{ color: 'var(--water-deep)' }}>
+              <rect x="0" y={surfaceY} width="44" height="44" fill="url(#dots-water-dense)" opacity="0.55" />
+            </g>
+          </g>
+        )}
+
+        {/* Dotted overlay on full state for visual richness */}
+        {reached && (
+          <g clipPath={`url(#${clipId})`} style={{ color: 'var(--mint-deep)' }}>
+            <rect x="0" y="0" width="44" height="44" fill="url(#dots-water-dense)" opacity="0.4" />
+          </g>
+        )}
+
+        {/* Outline */}
+        <path
+          d={DROP}
+          fill="none"
+          stroke={empty ? 'var(--ink-muted)' : reached ? 'var(--mint-deep)' : 'var(--ink)'}
+          strokeWidth={reached ? 2.1 : isToday ? 2 : 1.7}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          strokeDasharray={empty ? '3 3' : undefined}
+          opacity={empty ? 0.5 : 0.95}
+          style={{ filter: 'url(#sketch-2)' }}
+        />
+
+        {/* Cute heart on top when goal reached */}
+        {reached && (
+          <g transform="translate(15, -5)" style={{ filter: 'url(#sketch-soft)' }}>
+            <path
+              d="M7 12 L 2 7 C 0 5, 2 1, 5 3 L 7 5 L 9 3 C 12 1, 14 5, 12 7 L 7 12 Z"
+              fill="var(--blush)"
+              stroke="var(--ink)"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+            />
+          </g>
+        )}
+      </svg>
+
+      {/* Today value badge — shown below today's drop for quick reading */}
+      {isToday && value > 0 && (
+        <div
+          className="absolute -bottom-1 left-1/2 -translate-x-1/2 font-label font-bold text-[0.7rem] text-ink whitespace-nowrap px-1.5 py-0.5 rounded-full"
+          style={{
+            background: 'var(--paper)',
+            border: '1.2px solid var(--ink)',
+            boxShadow: '1.5px 1.5px 0 rgba(90, 74, 54, 0.35)',
+          }}
+        >
+          {value.toLocaleString()}
         </div>
-        <div className="font-heading font-bold text-[1.15rem] mt-0.5 leading-none tabular-nums">
+      )}
+    </div>
+  );
+}
+
+function SketchStat({ label, value, unit, variant = 'v1', tone = 'water', icon }) {
+  return (
+    <div className={`sketch-card ${variant} tone-${tone} flex items-center gap-3`} style={{ padding: '0.9rem 1.05rem' }}>
+      <div className="shrink-0">{icon}</div>
+      <div className="min-w-0">
+        <div className="font-label text-[0.85rem] text-ink-muted leading-none">{label}</div>
+        <div className="font-display font-bold text-[1.55rem] text-ink leading-none mt-1">
           {value}
-          <span className="text-ink-muted text-[0.74rem] font-normal ml-1">{unit}</span>
+          <span className="font-hand text-[0.85rem] text-ink-muted ml-1">{unit}</span>
         </div>
       </div>
     </div>
   );
 }
 
-function AvgIcon() {
+function TrendIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 17 L8 12 L12 14 L16 8 L21 11" />
-      <circle cx="16" cy="8" r="1.5" fill="currentColor" />
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" style={{ filter: 'url(#sketch-2)' }}>
+      <path
+        d="M3 21 L 9 14 L 14 16 L 19 9 L 25 12"
+        stroke="var(--ink)"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <circle cx="19" cy="9" r="2.2" fill="var(--butter)" stroke="var(--ink)" strokeWidth="1.1" />
     </svg>
   );
 }
 
-function FlameIcon() {
+function HeartIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 2 C 12 6, 8 7, 8 12 C 8 16, 10 17, 11 17 C 10 15, 11 13, 13 12 C 13 14, 15 14, 15 16 C 16 14, 17 13, 17 12 C 17 7, 13 6, 12 2 Z" opacity="0.95" />
-      <path d="M12 17 C 9 17, 7 19, 7 21 C 9 21.5, 11 21, 12 21 C 13 21, 15 21.5, 17 21 C 17 19, 15 17, 12 17 Z" opacity="0.5" />
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" style={{ filter: 'url(#sketch-2)' }}>
+      <path
+        d="M14 23 L 5 14 C 2 11, 6 4, 10 7 L 14 11 L 18 7 C 22 4, 26 11, 23 14 L 14 23 Z"
+        fill="var(--blush)"
+        stroke="var(--ink)"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=Kalam:wght@300;400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,63 @@
 
 @layer base {
   :root {
+    color-scheme: light;
+
+    /* Paper + ink */
+    --paper: #fdfaf3;          /* cream */
+    --paper-alt: #f7f0df;
+    --paper-edge: #ebe2cc;
+    --ink: #5a4a36;            /* warm brown — never pure black */
+    --ink-soft: #7a6a55;
+    --ink-muted: #a89880;
+    --ink-subtle: #c9bca5;
+
+    /* Pastel palette */
+    --water-soft: #cfe6f5;     /* baby blue */
+    --water: #8fbfe0;
+    --water-deep: #5c95c3;
+    --lilac-soft: #e3daf2;
+    --lilac: #b8a8db;
+    --butter-soft: #fcecae;
+    --butter: #f6d65c;
+    --blush-soft: #fad6da;
+    --blush: #eaa3aa;
+    --mint-soft: #d2ebd9;
+    --mint: #8fc9a5;
+    --mint-deep: #5ca37c;
+    --peach-soft: #fde0c6;
+    --peach: #f4b078;
+
+    --highlight: var(--butter);
+    --red: #c66f7a;
+  }
+
+  html.dark {
     color-scheme: dark;
+    /* Cozy night — soft indigo paper, warm cream ink, gentle pastels */
+    --paper: #2a2547;          /* deep indigo, slight purple */
+    --paper-alt: #353060;
+    --paper-edge: #4b4576;
+    --ink: #fae6c1;            /* warm cream */
+    --ink-soft: #dac6a2;
+    --ink-muted: #a89779;
+    --ink-subtle: #7a6c52;
+    --water-soft: #3d4e74;     /* dusty blue */
+    --water: #a3c7e8;
+    --water-deep: #cfe1f5;
+    --lilac-soft: #4a3f6c;
+    --lilac: #cdbcec;
+    --butter-soft: #4f4426;
+    --butter: #f6dd8c;
+    --blush-soft: #5a3a4a;
+    --blush: #f1b4be;
+    --mint-soft: #3a4f4a;
+    --mint: #b8e0c8;
+    --mint-deep: #d8eee0;
+    --peach-soft: #5a4836;
+    --peach: #f3bf95;
+    --highlight: var(--butter);
+    --red: #f1a7af;
   }
 
   html {
@@ -16,45 +72,45 @@
   }
 
   body {
-    @apply font-body bg-ink-bg text-ink-text;
+    font-family: 'Patrick Hand', cursive;
+    color: var(--ink);
+    background-color: var(--paper);
+    /* Soft paper grain + faint dotted journal grid */
     background-image:
-      radial-gradient(ellipse 80% 60% at 15% -5%, rgba(56, 189, 248, 0.22) 0%, transparent 55%),
-      radial-gradient(ellipse 70% 50% at 90% 10%, rgba(167, 139, 250, 0.18) 0%, transparent 55%),
-      radial-gradient(ellipse 90% 70% at 85% 100%, rgba(13, 148, 136, 0.18) 0%, transparent 55%),
-      radial-gradient(ellipse 60% 40% at 10% 90%, rgba(2, 132, 199, 0.22) 0%, transparent 60%),
-      linear-gradient(180deg, #070f1f 0%, #0b1729 55%, #0a1525 100%);
-    background-attachment: fixed;
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.29  0 0 0 0 0.21  0 0 0 0.045 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
+      radial-gradient(circle, rgba(90, 74, 54, 0.085) 1.1px, transparent 1.2px);
+    background-size: auto, 24px 24px;
+    background-position: 0 0, 0 0;
+    background-attachment: fixed, fixed;
     min-height: 100vh;
     overscroll-behavior: none;
-    letter-spacing: -0.005em;
+    font-size: 1.05rem;
+    line-height: 1.45;
   }
 
-  html.light {
-    color-scheme: light;
-  }
-
-  html.light body {
-    @apply text-[#0b2542];
+  html.dark body {
+    /* Two layers of "stars" at different sizes/densities for a soft night-sky feel */
     background-image:
-      radial-gradient(ellipse 80% 60% at 15% -5%, rgba(125, 211, 252, 0.55) 0%, transparent 55%),
-      radial-gradient(ellipse 70% 50% at 90% 10%, rgba(196, 181, 253, 0.35) 0%, transparent 55%),
-      radial-gradient(ellipse 90% 70% at 85% 100%, rgba(94, 234, 212, 0.30) 0%, transparent 55%),
-      linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #dbeefb 100%);
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
+      radial-gradient(circle, rgba(250, 230, 193, 0.22) 0.7px, transparent 0.9px),
+      radial-gradient(circle, rgba(250, 230, 193, 0.12) 1.4px, transparent 1.6px);
+    background-size: auto, 28px 28px, 68px 68px;
+    background-position: 0 0, 0 0, 14px 34px;
   }
 
   ::selection {
-    @apply bg-aqua-subtle text-ink-text;
+    background: var(--butter);
+    color: var(--ink);
   }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--ink-subtle);
     border-radius: 50px;
     border: 2px solid transparent;
     background-clip: padding-box;
   }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
 
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
@@ -63,334 +119,336 @@
   }
 
   *:focus-visible {
-    outline: 2px solid rgba(56, 189, 248, 0.7);
-    outline-offset: 2px;
+    outline: 2.5px dashed var(--water-deep);
+    outline-offset: 3px;
     border-radius: 6px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Caveat', cursive;
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: 0.005em;
   }
 }
 
 @layer components {
-  /* ---------- Surfaces / cards ---------- */
+  /* ---------- Sticker cards ----------
+   * Cream/pastel surface with a soft sketched border via pseudo.
+   * Stroke is warm brown at 1.6px — friendly, not technical.
+   */
 
-  .glass {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.02) 100%);
-    @apply border border-ink-border backdrop-blur-glass;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-      0 10px 32px -10px rgba(0, 0, 0, 0.4),
-      0 2px 6px rgba(0, 0, 0, 0.15);
-  }
-
-  .glass-strong {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 60%, rgba(255, 255, 255, 0.04) 100%),
-      rgba(11, 23, 41, 0.62);
-    @apply border border-ink-border backdrop-blur-glass;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.2),
-      0 24px 60px -18px rgba(0, 0, 0, 0.6),
-      0 8px 20px -6px rgba(8, 18, 36, 0.5);
-  }
-
-  html.light .glass {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.55) 100%);
-    @apply border-white/70;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.85),
-      0 10px 28px -8px rgba(8, 47, 96, 0.12),
-      0 2px 6px rgba(8, 47, 96, 0.06);
-  }
-
-  html.light .glass-strong {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.78) 100%);
-    @apply border-white;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      0 24px 60px -18px rgba(8, 47, 96, 0.22),
-      0 8px 18px -4px rgba(8, 47, 96, 0.12);
-  }
-
-  .glass-hover {
-    @apply transition-all duration-300 hover:border-ink-border-hover;
-  }
-
-  .glass-hover:hover {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.085) 0%, rgba(255, 255, 255, 0.035) 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.2),
-      0 16px 40px -10px rgba(0, 0, 0, 0.5),
-      0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-
-  html.light .glass-hover:hover {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.72) 100%);
-  }
-
-  /* Gradient hairline border on hover for premium cards */
-  .premium-card {
+  .sketch-card {
     position: relative;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 22px;
+    padding: 1.25rem;
+    box-shadow:
+      0 1px 0 rgba(90, 74, 54, 0.04),
+      0 4px 14px -8px rgba(90, 74, 54, 0.16);
   }
 
-  .premium-card::before {
+  @media (min-width: 640px) {
+    .sketch-card { padding: 1.5rem; }
+  }
+
+  html.dark .sketch-card {
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.18),
+      0 6px 18px -8px rgba(0, 0, 0, 0.45);
+  }
+
+  .sketch-card::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(140deg, rgba(125, 211, 252, 0.55) 0%, rgba(56, 189, 248, 0) 35%, rgba(167, 139, 250, 0) 60%, rgba(94, 234, 212, 0.45) 100%);
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    border: 1.6px solid var(--ink);
+    border-radius: 22px;
     pointer-events: none;
+    filter: url(#sketch-1);
+    opacity: 0.85;
   }
 
-  .premium-card:hover::before {
-    opacity: 1;
-  }
+  .sketch-card.v2::before { filter: url(#sketch-2); border-radius: 26px; }
+  .sketch-card.v3::before { filter: url(#sketch-3); border-radius: 20px; }
+  .sketch-card.v2 { border-radius: 26px; }
+  .sketch-card.v3 { border-radius: 20px; }
 
-  /* ---------- Inputs ---------- */
+  /* Pastel variants — like washi tape / sticker color */
+  .sketch-card.tone-water { background: var(--water-soft); }
+  .sketch-card.tone-lilac { background: var(--lilac-soft); }
+  .sketch-card.tone-butter { background: var(--butter-soft); }
+  .sketch-card.tone-blush { background: var(--blush-soft); }
+  .sketch-card.tone-mint { background: var(--mint-soft); }
+  .sketch-card.tone-peach { background: var(--peach-soft); }
 
-  .input-base {
-    @apply w-full px-4 py-3.5 rounded-2xl text-ink-text font-medium text-base
-           outline-none transition-all duration-200 placeholder:text-ink-subtle;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-  }
-
-  .input-base:hover {
-    border-color: rgba(255, 255, 255, 0.18);
-  }
-
-  .input-base:focus {
-    @apply border-aqua;
-    background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      0 0 0 3px rgba(56, 189, 248, 0.22),
-      0 0 24px -4px rgba(56, 189, 248, 0.35);
-  }
-
-  html.light .input-base {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(8, 47, 96, 0.12);
-    @apply text-[#0b2542] placeholder:text-black/40;
-    box-shadow: inset 0 1px 2px rgba(8, 47, 96, 0.04);
-  }
-
-  html.light .input-base:focus {
-    background: #fff;
-    border-color: #38bdf8;
-  }
+  html.dark .sketch-card { background: var(--paper-alt); }
+  html.dark .sketch-card.tone-water { background: var(--water-soft); }
+  html.dark .sketch-card.tone-lilac { background: var(--lilac-soft); }
+  html.dark .sketch-card.tone-butter { background: var(--butter-soft); color: var(--paper); }
+  html.dark .sketch-card.tone-blush { background: var(--blush-soft); }
+  html.dark .sketch-card.tone-mint { background: var(--mint-soft); }
+  html.dark .sketch-card.tone-peach { background: var(--peach-soft); }
 
   /* ---------- Buttons ---------- */
 
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-base
-           transition-all duration-200 relative overflow-hidden;
-    color: #032238;
-    background:
-      linear-gradient(135deg, #bae6fd 0%, #7dd3fc 30%, #38bdf8 70%, #0ea5e9 100%);
-    box-shadow:
-      0 10px 28px -6px rgba(56, 189, 248, 0.55),
-      0 4px 10px -2px rgba(14, 165, 233, 0.35),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55),
-      inset 0 -1px 0 rgba(8, 47, 96, 0.18);
+  .sketch-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.2rem;
+    font-family: 'Kalam', cursive;
+    font-weight: 700;
+    font-size: 1.02rem;
+    color: var(--ink);
+    background: var(--paper);
+    border-radius: 999px;                /* pill */
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 2px 2px 0 rgba(90, 74, 54, 0.55);
+    border: none;
   }
 
-  .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow:
-      0 14px 36px -6px rgba(56, 189, 248, 0.65),
-      0 6px 14px -3px rgba(14, 165, 233, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  }
-
-  .btn-primary:active {
-    transform: translateY(0) scale(0.97);
-  }
-
-  .btn-primary:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    transform: none;
-    filter: saturate(0.6);
-  }
-
-  .btn-primary::after {
+  .sketch-btn::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
+    border: 1.6px solid var(--ink);
+    border-radius: 999px;
     pointer-events: none;
+    filter: url(#sketch-2);
+    opacity: 0.9;
   }
 
-  .btn-primary:hover:not(:disabled)::after {
-    transform: translateX(100%);
+  .sketch-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 rgba(90, 74, 54, 0.55);
   }
 
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-semibold text-[0.92rem]
-           text-ink-text transition-all duration-200;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  .sketch-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0 rgba(90, 74, 54, 0.55);
   }
 
-  .btn-secondary:hover {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
-    border-color: rgba(255, 255, 255, 0.22);
-    transform: translateY(-1px);
+  .sketch-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 1px 1px 0 rgba(90, 74, 54, 0.35);
   }
 
-  .btn-secondary:active {
-    transform: translateY(0) scale(0.97);
+  .sketch-btn.primary {
+    background: var(--water);
+    color: var(--ink);
   }
 
-  html.light .btn-secondary {
-    @apply text-[#0b2542];
-    background: rgba(255, 255, 255, 0.75);
-    border-color: rgba(8, 47, 96, 0.12);
+  .sketch-btn.water {
+    background: var(--water-soft);
+    color: var(--ink);
   }
 
-  html.light .btn-secondary:hover {
-    background: #fff;
-  }
+  .sketch-btn.blush { background: var(--blush-soft); color: var(--ink); }
+  .sketch-btn.mint  { background: var(--mint-soft);  color: var(--ink); }
+  .sketch-btn.lilac { background: var(--lilac-soft); color: var(--ink); }
+  .sketch-btn.butter{ background: var(--butter-soft);color: var(--ink); }
 
-  .icon-btn {
-    @apply w-10 h-10 inline-flex items-center justify-center rounded-2xl text-ink-muted
-           transition-all duration-200;
+  /* Icon-only button */
+  .sketch-icon-btn {
+    position: relative;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: transparent;
-    border: 1px solid transparent;
+    color: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
   }
 
-  .icon-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.12);
-    color: #f0f7ff;
+  .sketch-icon-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1.4px solid var(--ink);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: url(#sketch-soft);
+    opacity: 0;
+    transition: opacity 0.15s ease;
   }
 
-  .icon-btn:active { transform: scale(0.92); }
+  .sketch-icon-btn:hover::before { opacity: 0.7; }
+  .sketch-icon-btn:hover { background: var(--paper-alt); }
+  .sketch-icon-btn:active { transform: scale(0.92) rotate(-2deg); }
 
-  html.light .icon-btn {
-    @apply text-[#3b5775];
+  /* ---------- Inputs ---------- */
+
+  .sketch-input {
+    position: relative;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.1rem;
+    color: var(--ink);
+    background: transparent;
+    border-radius: 16px;
+    outline: none;
+    border: none;
   }
 
-  html.light .icon-btn:hover {
-    background: rgba(255, 255, 255, 0.75);
-    border-color: rgba(8, 47, 96, 0.1);
-    color: #0b2542;
+  .sketch-input-wrap {
+    position: relative;
+    background: var(--paper);
+    border-radius: 16px;
   }
+
+  .sketch-input-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1.6px solid var(--ink);
+    border-radius: 16px;
+    pointer-events: none;
+    filter: url(#sketch-3);
+    opacity: 0.8;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+  }
+
+  .sketch-input-wrap:focus-within::before {
+    opacity: 1;
+    filter: url(#sketch-1);
+  }
+
+  .sketch-input::placeholder { color: var(--ink-subtle); font-style: italic; }
 
   /* ---------- Chips ---------- */
 
-  .chip {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-full text-[0.84rem] font-semibold
-           text-ink-muted transition-all duration-200;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.015) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .sketch-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.85rem;
+    font-family: 'Kalam', cursive;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--paper);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease;
   }
 
-  .chip:hover {
-    border-color: rgba(255, 255, 255, 0.22);
-    color: #f0f7ff;
+  .sketch-chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    pointer-events: none;
+    filter: url(#sketch-soft);
+    opacity: 0.7;
   }
 
-  .chip.active {
-    color: #032238;
-    background: linear-gradient(135deg, #bae6fd 0%, #38bdf8 100%);
-    border-color: transparent;
+  .sketch-chip:hover { background: var(--paper-alt); }
+  .sketch-chip.active {
+    background: var(--water);
+    color: var(--ink);
+  }
+
+  /* ---------- Preset (quick-add) cards ---------- */
+
+  .preset-card {
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    will-change: transform;
+  }
+
+  .preset-card:hover {
+    transform: translateY(-3px) scale(1.025);
     box-shadow:
-      0 6px 18px rgba(56, 189, 248, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      0 2px 0 rgba(90, 74, 54, 0.08),
+      0 10px 22px -10px rgba(90, 74, 54, 0.28);
+    filter: saturate(1.05);
   }
 
-  html.light .chip {
-    background: rgba(255, 255, 255, 0.78);
-    border-color: rgba(8, 47, 96, 0.1);
-    @apply text-[#3b5775];
+  .preset-card:active {
+    transform: translateY(0) scale(0.94);
+    transition-duration: 0.08s;
+    box-shadow:
+      0 1px 0 rgba(90, 74, 54, 0.04),
+      0 2px 8px -4px rgba(90, 74, 54, 0.18);
   }
 
-  html.light .chip:hover { @apply text-[#0b2542]; }
-
-  html.light .chip.active {
-    background: linear-gradient(135deg, #7dd3fc 0%, #0284c7 100%);
-    color: #fff;
+  .preset-card:focus-visible {
+    outline-offset: 4px;
   }
 
-  /* ---------- Stat tiles ---------- */
+  /* ---------- Helpers ---------- */
 
-  .stat-tile {
-    @apply relative rounded-2xl px-4 py-3.5 transition-all duration-200;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.015) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  .marker {
+    background: linear-gradient(120deg, transparent 0%, var(--butter-soft) 15%, var(--butter-soft) 85%, transparent 100%);
+    padding: 0 0.2em;
+    border-radius: 3px;
   }
 
-  html.light .stat-tile {
-    background: rgba(255, 255, 255, 0.65);
-    border-color: rgba(8, 47, 96, 0.08);
+  .marker-mint {
+    background: linear-gradient(120deg, transparent 0%, var(--mint-soft) 15%, var(--mint-soft) 85%, transparent 100%);
+    padding: 0 0.2em;
+    border-radius: 3px;
+  }
+
+  .paper-divider {
+    position: relative;
+    height: 10px;
+  }
+
+  .paper-divider::before {
+    content: '';
+    position: absolute;
+    inset: 50% 10% auto 10%;
+    height: 1.4px;
+    background: var(--ink);
+    opacity: 0.4;
+    filter: url(#sketch-3);
   }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
-  .text-grad-water {
-    background: linear-gradient(135deg, #e0f2fe 0%, #7dd3fc 35%, #38bdf8 70%, #0ea5e9 100%);
-    -webkit-background-clip: text;
-            background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-  }
+  .text-ink { color: var(--ink); }
+  .text-ink-soft { color: var(--ink-soft); }
+  .text-ink-muted { color: var(--ink-muted); }
+  .text-ink-subtle { color: var(--ink-subtle); }
+  .text-water { color: var(--water); }
+  .text-water-deep { color: var(--water-deep); }
+  .text-blush { color: var(--blush); }
+  .text-mint { color: var(--mint-deep); }
+  .text-lilac { color: var(--lilac); }
+  .text-butter-deep { color: var(--butter); filter: brightness(0.7); }
+  .text-red-pencil { color: var(--red); }
 
-  html.light .text-grad-water {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #075985 100%);
-    -webkit-background-clip: text;
-            background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+  .bg-paper { background: var(--paper); }
+  .bg-paper-alt { background: var(--paper-alt); }
+  .bg-water-soft { background: var(--water-soft); }
+  .bg-lilac-soft { background: var(--lilac-soft); }
+  .bg-butter-soft { background: var(--butter-soft); }
+  .bg-blush-soft { background: var(--blush-soft); }
+  .bg-mint-soft { background: var(--mint-soft); }
+  .bg-peach-soft { background: var(--peach-soft); }
+  .bg-highlight { background: var(--butter-soft); }
 
-  .text-grad-marine {
-    background: linear-gradient(135deg, #5eead4 0%, #2dd4bf 50%, #14b8a6 100%);
-    -webkit-background-clip: text;
-            background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-  }
+  .font-display { font-family: 'Caveat', cursive; }
+  .font-hand { font-family: 'Patrick Hand', cursive; }
+  .font-label { font-family: 'Kalam', cursive; }
 
-  .ring-aqua-glow {
-    box-shadow:
-      0 0 0 1px rgba(125, 211, 252, 0.35),
-      0 0 32px -4px rgba(56, 189, 248, 0.5),
-      0 0 80px -10px rgba(56, 189, 248, 0.35);
-  }
-
-  /* Subtle noise overlay for premium grain (used on hero) */
-  .noise-overlay {
-    position: relative;
-  }
-
-  .noise-overlay::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3CfeColorMatrix values='0 0 0 0 0.9 0 0 0 0 0.95 0 0 0 0 1 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.4;
-    mix-blend-mode: overlay;
-    pointer-events: none;
-  }
+  .tilt-left { transform: rotate(-0.7deg); }
+  .tilt-right { transform: rotate(0.7deg); }
+  .tilt-mini { transform: rotate(-0.3deg); }
 }

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { FiX } from 'react-icons/fi';
 import { useI18n } from '../i18n';
 import { ACTIVITY_MULTIPLIER, calcGoal, formatHour } from '../utils.js';
 
@@ -39,20 +38,23 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 animate-fade-in">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0" style={{ background: 'rgba(90, 74, 54, 0.35)', backdropFilter: 'blur(3px)' }} onClick={onClose} />
       <form
         onSubmit={handleSave}
-        className="relative w-full max-w-lg glass-strong rounded-5xl p-7 animate-slide-up max-h-[92vh] overflow-y-auto"
+        className="sketch-card relative w-full max-w-lg animate-slide-up max-h-[92vh] overflow-y-auto"
+        style={{ padding: '1.75rem' }}
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-heading font-bold text-[1.4rem]">{t('settings.title')}</h2>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="font-display font-bold text-[2rem] text-ink leading-none">
+            <span className="marker">{t('settings.title')}</span>
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label={t('a11y.closeDialog')}
-            className="icon-btn"
+            className="sketch-icon-btn"
           >
-            <FiX size={18} />
+            <CloseIcon />
           </button>
         </div>
 
@@ -67,12 +69,12 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
               step="0.5"
               value={draft.weight}
               onChange={(e) => update({ weight: e.target.value })}
-              className="input-base"
+              className="sketch-input pr-12"
             />
           </Field>
 
           <div>
-            <label className="block text-[0.78rem] font-semibold tracking-wider uppercase text-ink-muted mb-2">
+            <label className="block font-label text-[0.92rem] text-ink-muted mb-2">
               {t('settings.activityLabel')}
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -81,7 +83,8 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
                   key={level}
                   type="button"
                   onClick={() => update({ activity: level })}
-                  className={['chip py-3 rounded-2xl', draft.activity === level ? 'active' : ''].join(' ')}
+                  className={['sketch-chip flex-1', draft.activity === level ? 'active' : ''].join(' ')}
+                  style={{ padding: '0.5rem 0.6rem' }}
                 >
                   {t(`onboarding.activity${level.charAt(0).toUpperCase() + level.slice(1)}`)}
                 </button>
@@ -89,14 +92,14 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
             </div>
           </div>
 
-          <div className="px-4 py-3 rounded-2xl bg-aqua-subtle border border-aqua/20">
-            <div className="text-[0.72rem] font-semibold tracking-wider uppercase text-aqua-light">
+          <div className="sketch-card v3 tone-water text-center" style={{ padding: '0.85rem' }}>
+            <div className="font-label text-[0.85rem] text-ink-muted">
               {t('settings.goalCalculated')}
             </div>
-            <div className="font-heading font-bold text-[1.4rem] text-aqua-light">
-              {calculatedGoal.toLocaleString()} <span className="text-ink-muted text-[0.85rem] font-normal">ml</span>
+            <div className="font-display font-bold text-[1.9rem] text-ink leading-none mt-0.5">
+              {calculatedGoal.toLocaleString()} <span className="font-hand text-[0.95rem] text-ink-muted">ml</span>
             </div>
-            <div className="text-[0.74rem] text-ink-subtle mt-0.5">
+            <div className="font-hand text-[0.88rem] text-ink-muted mt-0.5">
               {Number(draft.weight) || 60} kg × {ACTIVITY_MULTIPLIER[draft.activity]} ml/kg
             </div>
           </div>
@@ -111,15 +114,15 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
               value={draft.goalOverride ?? ''}
               onChange={(e) => update({ goalOverride: e.target.value })}
               placeholder={String(calculatedGoal)}
-              className="input-base"
+              className="sketch-input pr-12"
             />
           </Field>
         </Section>
 
         {/* Reminders */}
         <Section title={t('settings.sectionReminders')}>
-          <label className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl glass cursor-pointer">
-            <span className="font-medium">{t('settings.remindersEnabled')}</span>
+          <div className="sketch-card v2 flex items-center justify-between gap-3" style={{ padding: '0.7rem 0.95rem' }}>
+            <span className="font-hand text-[1.05rem] text-ink">{t('settings.remindersEnabled')}</span>
             <Toggle
               checked={!!draft.reminders.enabled}
               onChange={(enabled) => {
@@ -127,11 +130,11 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
                 if (enabled && notifPermission === 'default' && onRequestNotif) onRequestNotif();
               }}
             />
-          </label>
+          </div>
 
           {draft.reminders.enabled && (
             <>
-              <p className="text-[0.84rem] text-ink-muted px-1">
+              <p className="font-hand text-[0.95rem] text-ink-muted px-1">
                 {t('settings.remindersHint', {
                   n: draft.reminders.intervalH,
                   start: formatHour(draft.reminders.startH),
@@ -146,14 +149,14 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
                     max="8"
                     value={draft.reminders.intervalH}
                     onChange={(e) => updateReminders({ intervalH: e.target.value })}
-                    className="input-base"
+                    className="sketch-input"
                   />
                 </Field>
                 <Field label={t('settings.activeStart')}>
                   <select
                     value={draft.reminders.startH}
                     onChange={(e) => updateReminders({ startH: Number(e.target.value) })}
-                    className="input-base"
+                    className="sketch-input"
                   >
                     {Array.from({ length: 24 }, (_, h) => (
                       <option key={h} value={h}>{formatHour(h)}</option>
@@ -164,7 +167,7 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
                   <select
                     value={draft.reminders.endH}
                     onChange={(e) => updateReminders({ endH: Number(e.target.value) })}
-                    className="input-base"
+                    className="sketch-input"
                   >
                     {Array.from({ length: 24 }, (_, h) => (
                       <option key={h} value={h}>{formatHour(h)}</option>
@@ -173,20 +176,20 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
                 </Field>
               </div>
               {notifPermission === 'denied' && (
-                <p className="text-[0.84rem] text-rose-300 px-1">{t('settings.notifBlocked')}</p>
+                <p className="font-hand text-[0.92rem] text-red-pencil px-1">{t('settings.notifBlocked')}</p>
               )}
               {notifPermission === 'default' && (
-                <p className="text-[0.84rem] text-ink-muted px-1">{t('settings.notifPrompt')}</p>
+                <p className="font-hand text-[0.92rem] text-ink-muted px-1">{t('settings.notifPrompt')}</p>
               )}
             </>
           )}
         </Section>
 
-        <div className="flex gap-3 mt-2">
-          <button type="button" onClick={onClose} className="btn-secondary flex-1">
+        <div className="flex gap-3 mt-4">
+          <button type="button" onClick={onClose} className="sketch-btn flex-1">
             {t('settings.closeBtn')}
           </button>
-          <button type="submit" className="btn-primary flex-[2]">
+          <button type="submit" className="sketch-btn primary flex-[2]">
             {t('settings.saveBtn')}
           </button>
         </div>
@@ -197,8 +200,8 @@ export default function SettingsDialog({ user, onSave, onClose, notifPermission,
 
 function Section({ title, children }) {
   return (
-    <section className="mb-6">
-      <h3 className="font-heading font-semibold text-[0.74rem] tracking-[0.18em] uppercase text-ink-subtle mb-3">
+    <section className="mb-5">
+      <h3 className="font-display font-bold text-[1.35rem] text-ink leading-none mb-3">
         {title}
       </h3>
       <div className="flex flex-col gap-3">{children}</div>
@@ -209,18 +212,18 @@ function Section({ title, children }) {
 function Field({ label, hint, suffix, children }) {
   return (
     <div>
-      <label className="block text-[0.78rem] font-semibold tracking-wider uppercase text-ink-muted mb-2">
+      <label className="block font-label text-[0.92rem] text-ink-muted mb-2">
         {label}
       </label>
-      <div className="relative">
+      <div className="sketch-input-wrap relative">
         {children}
         {suffix && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-subtle text-sm font-medium pointer-events-none">
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 font-label text-ink-muted text-[0.95rem] pointer-events-none">
             {suffix}
           </span>
         )}
       </div>
-      {hint && <p className="text-[0.78rem] text-ink-subtle mt-1.5 px-1">{hint}</p>}
+      {hint && <p className="font-hand text-[0.88rem] text-ink-muted mt-1.5 px-1">{hint}</p>}
     </div>
   );
 }
@@ -232,17 +235,35 @@ function Toggle({ checked, onChange }) {
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className={[
-        'relative shrink-0 w-[52px] h-[30px] rounded-full transition-colors duration-300 outline-none',
-        'focus-visible:ring-2 focus-visible:ring-aqua focus-visible:ring-offset-2 focus-visible:ring-offset-ink-bg',
-        checked ? 'bg-aqua shadow-[0_0_16px_rgba(56,189,250,0.45)]' : 'bg-ink-border-hover',
-      ].join(' ')}
+      className="relative shrink-0 outline-none"
+      style={{ width: '54px', height: '30px' }}
     >
-      <span
-        aria-hidden="true"
-        className="absolute top-[3px] left-[3px] w-6 h-6 rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-        style={{ transform: checked ? 'translateX(22px)' : 'translateX(0px)' }}
-      />
+      <svg viewBox="0 0 54 30" width="54" height="30" aria-hidden="true">
+        <rect
+          x="2" y="2" width="50" height="26" rx="13"
+          fill={checked ? 'var(--water-wash)' : 'var(--paper)'}
+          stroke="var(--ink)"
+          strokeWidth="1.8"
+          style={{ filter: 'url(#sketch-2)' }}
+        />
+        <circle
+          cx={checked ? 39 : 15}
+          cy="15"
+          r="9"
+          fill={checked ? 'var(--water)' : 'var(--paper-alt)'}
+          stroke="var(--ink)"
+          strokeWidth="1.8"
+          style={{ filter: 'url(#sketch-soft)', transition: 'cx 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+        />
+      </svg>
     </button>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ filter: 'url(#sketch-soft)' }}>
+      <path d="M3 3 L 11 11 M11 3 L 3 11" />
+    </svg>
   );
 }

@@ -1,54 +1,94 @@
 /**
- * Decorative bubbles drifting upward across the viewport.
- * Pure CSS animation — fixed-positioned, behind the app.
- * Hidden when the user prefers reduced motion.
+ * Cute pastel doodles scattered as page marginalia.
+ * Hearts, drops, stars, sparkles in soft pastel colors at low opacity.
+ * Hidden on small screens to keep the layout breathable.
  */
-const BUBBLES = [
-  { left: '4%',  size: 64,  delay: 0,    dur: 28, opacity: 0.5, tone: 'aqua' },
-  { left: '12%', size: 28,  delay: 5,    dur: 22, opacity: 0.45, tone: 'aqua' },
-  { left: '22%', size: 48,  delay: 12,   dur: 34, opacity: 0.4, tone: 'iris' },
-  { left: '38%', size: 18,  delay: 18,   dur: 26, opacity: 0.3, tone: 'aqua' },
-  { left: '52%', size: 22,  delay: 7,    dur: 30, opacity: 0.4, tone: 'marine' },
-  { left: '68%', size: 36,  delay: 14,   dur: 24, opacity: 0.45, tone: 'aqua' },
-  { left: '78%', size: 22,  delay: 16,   dur: 24, opacity: 0.5, tone: 'iris' },
-  { left: '86%', size: 80,  delay: 2,    dur: 32, opacity: 0.42, tone: 'aqua' },
-  { left: '95%', size: 30,  delay: 9,    dur: 26, opacity: 0.45, tone: 'marine' },
+const DOODLES = [
+  { top: '10%', left: '3%', kind: 'heart',   color: 'var(--blush)',   size: 26, rot: -10 },
+  { top: '24%', left: '5%', kind: 'sparkle', color: 'var(--butter)',  size: 22, rot: 6 },
+  { top: '46%', left: '2%', kind: 'drop',    color: 'var(--water)',   size: 28, rot: -4 },
+  { top: '68%', left: '4%', kind: 'star',    color: 'var(--lilac)',   size: 26, rot: 12 },
+  { bottom: '8%', left: '6%', kind: 'cloud', color: 'var(--mint)',    size: 38, rot: -6 },
+  { top: '8%', right: '4%', kind: 'cloud',   color: 'var(--peach)',   size: 40, rot: 8 },
+  { top: '32%', right: '3%', kind: 'heart',  color: 'var(--blush)',   size: 22, rot: 14 },
+  { top: '54%', right: '4%', kind: 'star',   color: 'var(--butter)',  size: 28, rot: -10 },
+  { bottom: '18%', right: '3%', kind: 'sparkle', color: 'var(--lilac)', size: 22, rot: 4 },
+  { bottom: '5%', right: '8%', kind: 'drop', color: 'var(--water)',   size: 24, rot: 16 },
 ];
-
-const TONE_BG = {
-  aqua: 'radial-gradient(circle at 30% 30%, rgba(125, 211, 252, 0.4) 0%, rgba(56, 189, 248, 0.14) 60%, transparent 100%)',
-  iris: 'radial-gradient(circle at 30% 30%, rgba(196, 181, 253, 0.32) 0%, rgba(167, 139, 250, 0.1) 60%, transparent 100%)',
-  marine: 'radial-gradient(circle at 30% 30%, rgba(94, 234, 212, 0.35) 0%, rgba(45, 212, 191, 0.1) 60%, transparent 100%)',
-};
-
-const TONE_BORDER = {
-  aqua: 'rgba(125, 211, 252, 0.22)',
-  iris: 'rgba(196, 181, 253, 0.22)',
-  marine: 'rgba(94, 234, 212, 0.22)',
-};
 
 export default function BackgroundBubbles() {
   return (
     <div
       aria-hidden="true"
-      className="motion-safe:block motion-reduce:hidden pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
-      {BUBBLES.map((b, i) => (
+      {DOODLES.map((d, i) => (
         <span
           key={i}
-          className="absolute block rounded-full backdrop-blur-3xl animate-bubble-rise"
+          className="absolute hidden md:block motion-safe:animate-pulse-soft"
           style={{
-            left: b.left,
-            width: b.size,
-            height: b.size,
-            opacity: b.opacity,
-            animationDelay: `-${b.delay}s`,
-            animationDuration: `${b.dur}s`,
-            background: TONE_BG[b.tone],
-            border: `1px solid ${TONE_BORDER[b.tone]}`,
+            top: d.top,
+            left: d.left,
+            right: d.right,
+            bottom: d.bottom,
+            width: d.size,
+            height: d.size,
+            transform: `rotate(${d.rot}deg)`,
+            opacity: 0.45,
+            animationDelay: `${i * 0.3}s`,
           }}
-        />
+        >
+          <Doodle kind={d.kind} color={d.color} />
+        </span>
       ))}
     </div>
+  );
+}
+
+function Doodle({ kind, color }) {
+  const stroke = {
+    fill: color,
+    fillOpacity: 0.4,
+    stroke: color,
+    strokeWidth: 1.6,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    style: { filter: 'url(#sketch-soft)' },
+  };
+  const line = { ...stroke, fill: 'none', fillOpacity: 0 };
+
+  if (kind === 'heart') {
+    return (
+      <svg viewBox="0 0 24 24" width="100%" height="100%">
+        <path d="M12 20 L 4 12 C 1 9, 5 3, 9 6 L 12 9 L 15 6 C 19 3, 23 9, 20 12 L 12 20 Z" {...stroke} />
+      </svg>
+    );
+  }
+  if (kind === 'star') {
+    return (
+      <svg viewBox="0 0 24 24" width="100%" height="100%">
+        <path d="M12 3 L 14 10 L 21 11 L 15.5 15.5 L 17 22 L 12 18 L 7 22 L 8.5 15.5 L 3 11 L 10 10 Z" {...stroke} />
+      </svg>
+    );
+  }
+  if (kind === 'drop') {
+    return (
+      <svg viewBox="0 0 24 28" width="100%" height="100%">
+        <path d="M12 2 C 7 9, 4 14, 5 17 C 6 20, 9 22, 12 22 C 15 22, 18 20, 19 17 C 20 14, 17 9, 12 2 Z" {...stroke} />
+      </svg>
+    );
+  }
+  if (kind === 'sparkle') {
+    return (
+      <svg viewBox="0 0 24 24" width="100%" height="100%">
+        <path d="M12 3 V 21 M3 12 H 21 M5.5 5.5 L 18.5 18.5 M5.5 18.5 L 18.5 5.5" {...line} strokeWidth="1.4" />
+      </svg>
+    );
+  }
+  // cloud
+  return (
+    <svg viewBox="0 0 60 40" width="100%" height="100%">
+      <path d="M12 30 C 6 30, 4 22, 10 20 C 10 14, 18 12, 22 16 C 26 10, 38 12, 40 20 C 48 18, 54 26, 50 32 Z" {...stroke} />
+    </svg>
   );
 }

@@ -20,27 +20,30 @@ export default function OnboardingDialog({ onComplete, onSkip }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 animate-fade-in">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div className="absolute inset-0" style={{ background: 'rgba(90, 74, 54, 0.35)', backdropFilter: 'blur(3px)' }} />
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-md glass-strong rounded-5xl p-7 animate-slide-up"
+        className="sketch-card v2 relative w-full max-w-md animate-slide-up"
+        style={{ padding: '1.75rem' }}
       >
-        <div className="text-center mb-7">
-          <div className="text-5xl mb-3">💧</div>
-          <h2 className="font-heading font-bold text-[1.7rem] leading-tight text-balance">
+        <div className="text-center mb-6">
+          <div className="inline-block mb-3">
+            <DropletBig />
+          </div>
+          <h2 className="font-display font-bold text-[2.1rem] text-ink leading-tight text-balance">
             {t('onboarding.title')}
           </h2>
-          <p className="text-ink-muted mt-2 text-[0.95rem] text-balance">
+          <p className="font-hand text-ink-muted mt-1.5 text-[1.05rem] text-balance">
             {t('onboarding.subtitle')}
           </p>
         </div>
 
         {/* Weight */}
-        <div className="mb-6">
-          <label htmlFor="onb-weight" className="block text-[0.78rem] font-semibold tracking-wider uppercase text-ink-muted mb-2">
+        <div className="mb-5">
+          <label htmlFor="onb-weight" className="block font-label text-[0.95rem] text-ink-muted mb-2">
             {t('onboarding.weightLabel')}
           </label>
-          <div className="relative">
+          <div className="sketch-input-wrap relative">
             <input
               id="onb-weight"
               type="number"
@@ -50,69 +53,93 @@ export default function OnboardingDialog({ onComplete, onSkip }) {
               step="0.5"
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
-              className="input-base pr-12 text-[1.4rem] font-heading font-bold py-4"
+              className="sketch-input pr-12 font-display text-[1.7rem] py-3"
             />
-            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-ink-subtle font-medium pointer-events-none">
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 font-label text-ink-muted pointer-events-none">
               {t('onboarding.weightUnit')}
             </span>
           </div>
         </div>
 
         {/* Activity */}
-        <div className="mb-7">
-          <label className="block text-[0.78rem] font-semibold tracking-wider uppercase text-ink-muted mb-2">
+        <div className="mb-6">
+          <label className="block font-label text-[0.95rem] text-ink-muted mb-2">
             {t('onboarding.activityLabel')}
           </label>
-          <div className="grid grid-cols-3 gap-2">
-            {ACTIVITY_LEVELS.map((level) => (
+          <div className="grid grid-cols-3 gap-2.5">
+            {ACTIVITY_LEVELS.map((level, idx) => {
+              const tones = ['mint', 'water', 'lilac'];
+              const selectedTone = tones[idx];
+              return (
               <button
                 key={level}
                 type="button"
                 onClick={() => setActivity(level)}
                 className={[
-                  'flex flex-col items-center justify-center gap-1.5 py-4 px-2 rounded-3xl transition-all duration-200',
-                  activity === level
-                    ? 'bg-aqua text-[#04243d] shadow-glow-soft -translate-y-0.5'
-                    : 'glass glass-hover text-ink-muted hover:-translate-y-0.5',
+                  'sketch-card flex flex-col items-center justify-center gap-1.5 py-3 px-2',
+                  idx === 0 ? 'v1' : idx === 1 ? 'v2' : 'v3',
+                  activity === level ? `tone-${selectedTone}` : '',
+                  idx % 2 === 0 ? 'tilt-mini' : '',
                 ].join(' ')}
+                style={{ padding: '0.85rem 0.5rem' }}
               >
                 <span className="text-2xl">{ACTIVITY_EMOJI[level]}</span>
-                <span className="font-semibold text-[0.85rem]">
+                <span className="font-display font-bold text-[1.1rem] text-ink leading-none">
                   {t(`onboarding.activity${level.charAt(0).toUpperCase() + level.slice(1)}`)}
                 </span>
-                <span className={['text-[0.68rem] leading-tight text-center', activity === level ? 'text-[#04243d]/75' : 'text-ink-subtle'].join(' ')}>
+                <span className="font-hand text-[0.78rem] text-ink-muted text-center leading-tight">
                   {t(`onboarding.activity${level.charAt(0).toUpperCase() + level.slice(1)}Hint`)}
                 </span>
               </button>
-            ))}
+            )})}
           </div>
         </div>
 
         {/* Goal preview */}
-        <div className="mb-7 text-center py-5 px-4 rounded-3xl bg-aqua-subtle border border-aqua/20">
-          <div className="text-[0.72rem] font-semibold tracking-wider uppercase text-aqua-light mb-1">
+        <div className="sketch-card v3 tone-water mb-6 text-center" style={{ padding: '1rem' }}>
+          <div className="font-label text-[0.85rem] text-ink-muted">
             {t('onboarding.goalPreview')}
           </div>
-          <div className="font-heading font-bold text-[2rem] text-aqua-light leading-none">
+          <div className="font-display font-bold text-[2.4rem] text-ink leading-none mt-1">
             {previewGoal.toLocaleString()}
-            <span className="text-ink-muted text-[1rem] font-normal ml-1">ml</span>
+            <span className="font-hand text-[1rem] text-ink-muted ml-1.5">ml</span>
           </div>
-          <div className="text-[0.78rem] text-ink-subtle mt-1">
+          <div className="font-hand text-[0.9rem] text-ink-muted mt-1">
             {weight} kg × {ACTIVITY_MULTIPLIER[activity]} ml/kg
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <button type="submit" className="btn-primary w-full py-4 text-[1.05rem]">
+          <button type="submit" className="sketch-btn primary w-full" style={{ padding: '0.85rem 1.3rem', fontSize: '1.1rem' }}>
             {t('onboarding.submitBtn')}
           </button>
           {onSkip && (
-            <button type="button" onClick={onSkip} className="text-ink-subtle text-[0.85rem] py-2 hover:text-ink-text transition-colors">
+            <button
+              type="button"
+              onClick={onSkip}
+              className="font-hand text-ink-muted text-[0.95rem] py-2 hover:text-ink transition-colors underline decoration-dashed underline-offset-4"
+            >
               {t('onboarding.skipBtn')}
             </button>
           )}
         </div>
       </form>
     </div>
+  );
+}
+
+function DropletBig() {
+  return (
+    <svg width="60" height="66" viewBox="0 0 46 50" aria-hidden="true">
+      <path
+        d="M23 4 C 14 16, 6 26, 7 32 C 8 41, 16 46, 23 46 C 30 46, 39 41, 39 32 C 39 25, 31 16, 23 4 Z"
+        fill="var(--water-soft)"
+        stroke="var(--ink)"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+        style={{ filter: 'url(#sketch-1)' }}
+      />
+      <ellipse cx="18" cy="22" rx="2.4" ry="6" fill="var(--paper)" opacity="0.85" transform="rotate(-20 18 22)" />
+    </svg>
   );
 }

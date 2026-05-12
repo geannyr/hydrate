@@ -53,6 +53,9 @@ const translations = {
       avg: 'Daily average',
       streak: 'Goal streak',
       streakDays: '{n} day{plural}',
+      legendEmpty: 'empty',
+      legendPartial: 'partial',
+      legendFull: 'goal met',
     },
     settings: {
       title: 'Settings',
@@ -139,7 +142,7 @@ const translations = {
       empty: 'Toque em um botão abaixo para registrar o primeiro gole.',
     },
     quickAdd: {
-      label: 'Adicionar rápido',
+      label: 'Adição rápida',
       custom: 'Personalizado',
       customPlaceholder: 'ml',
       addBtn: 'Adicionar',
@@ -155,6 +158,9 @@ const translations = {
       avg: 'Média diária',
       streak: 'Sequência de metas',
       streakDays: '{n} dia{plural}',
+      legendEmpty: 'vazio',
+      legendPartial: 'parcial',
+      legendFull: 'meta',
     },
     settings: {
       title: 'Configurações',
@@ -257,6 +263,9 @@ const translations = {
       avg: 'Promedio diario',
       streak: 'Racha de metas',
       streakDays: '{n} día{plural}',
+      legendEmpty: 'vacío',
+      legendPartial: 'parcial',
+      legendFull: 'meta',
     },
     settings: {
       title: 'Configuración',

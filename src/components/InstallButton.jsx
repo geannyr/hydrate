@@ -1,4 +1,3 @@
-import { FiDownload } from 'react-icons/fi';
 import { useI18n } from '../i18n';
 import { useInstallPrompt } from '../hooks';
 
@@ -12,15 +11,22 @@ export default function InstallButton() {
     <button
       type="button"
       onClick={install}
-      className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-[0.78rem] font-semibold text-aqua-light border border-aqua/30 transition-all hover:-translate-y-0.5"
-      style={{
-        background: 'linear-gradient(135deg, rgba(125, 211, 252, 0.15) 0%, rgba(56, 189, 248, 0.08) 100%)',
-        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 12px -2px rgba(56, 189, 248, 0.2)',
-      }}
+      className="hidden sm:inline-flex sketch-btn water"
+      style={{ padding: '0.4rem 0.9rem', fontSize: '0.95rem' }}
       aria-label={t('install.cta', { default: 'Install app' })}
     >
-      <FiDownload size={14} />
+      <DownloadIcon />
       <span>{t('install.cta')}</span>
     </button>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ filter: 'url(#sketch-soft)' }}>
+      <path d="M8 2 V 11" />
+      <path d="M4 7 L 8 11 L 12 7" />
+      <path d="M3 14 H 13" />
+    </svg>
   );
 }

@@ -213,14 +213,15 @@ export default function App() {
 
               <HistoryWeek history={history} goal={goal} />
 
-              <footer className="mt-2 pt-6 border-t border-ink-border text-center text-[0.82rem] text-ink-subtle">
+              <footer className="mt-2 pt-6 text-center font-hand text-[0.95rem] text-ink-muted">
+                <div className="paper-divider mb-4" />
                 <p>
                   {t('footer.madeBy')}{' '}
                   <a
                     href="https://geannyr.github.io/curriculo2/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-ink-muted hover:text-aqua-light transition-colors"
+                    className="text-ink hover:text-water transition-colors underline decoration-dashed underline-offset-4"
                   >
                     Geanny Rodrigues
                   </a>
